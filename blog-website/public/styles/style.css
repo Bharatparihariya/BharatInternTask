@@ -1,0 +1,84 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: yellowgreen;
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+}
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  margin-bottom: 20px;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+button,
+a.button {
+  padding: 10px 20px;
+  /* Same padding for both buttons */
+  background-color: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+a.button:hover {
+  background-color: #555;
+}
+
+/* CSS for blog layout */
+.blog-posts {
+  list-style: none;
+  padding: 0;
+}
+
+.blog-post {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.post-content h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.post-content p {
+  font-size: 16px;
+}
+
+.post-actions {
+  margin-top: 10px;
+}
+
+.post-actions form,
+.post-actions a {
+  margin-right: 10px;
+}
+
+.post-actions form,
+.post-actions a.button {
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.post-actions form button {
+  padding: 10px 20px;
+  /* Same padding for delete button */
+}

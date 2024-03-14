@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Write a Post</title>
+    <link rel="stylesheet" href="/public/styles/style.css" />
+  </head>
+  <body>
+    <h1>Write a Post</h1>
+    <form action="/write" method="post">
+      <input type="text" name="title" placeholder="Title" required /><br />
+      <textarea name="content" placeholder="Content" required></textarea><br />
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>
