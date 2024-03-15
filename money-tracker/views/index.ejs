@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Money Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Money Tracker</h1>
+    <form id="transactionForm">
+      <input type="text" name="description" placeholder="Description" />
+      <input type="number" name="amount" placeholder="Amount" />
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="transactions">
+      <h2>Transactions</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="transactionList">
+          <!-- Transaction rows will be dynamically added here -->
+        </tbody>
+      </table>
+      <p class="total-amount">
+        Total Amount: <span id="totalAmount"><%= totalAmount %></span>
+      </p>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Fetch initial data
+        await fetchTransactions();
+
+        // Add event listener to form submission
+        document
+          .getElementById("transactionForm")
+          .addEventListener("submit", handleFormSubmit);
+      });
+
+      async function fetchTransactions() {
+        try {
+          const response = await fetch("/transactions");
+          const data = await response.json();
+          const transactions = data.transactions;
+          const totalAmount = data.totalAmount;
+          updateTransactions(transactions);
+          updateTotalAmount(totalAmount);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      async function handleFormSubmit(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const description = formData.get("description");
+        const amount = formData.get("amount");
+        try {
+          const response = await fetch("/transactions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ description, amount }),
+          });
+          const data = await response.json();
+          updateTransactions([data.transaction], true);
+          updateTotalAmount(data.totalAmount);
+          form.reset();
+        } catch (error) {
+          console.error("Error adding transaction:", error);
+        }
+      }
+
+      function updateTransactions(transactions, prepend = false) {
+        const transactionList = document.getElementById("transactionList");
+        transactions.forEach((transaction) => {
+          const row = document.createElement("tr");
+          const descriptionCell = document.createElement("td");
+          descriptionCell.textContent = transaction.description;
+          const amountCell = document.createElement("td");
+          amountCell.textContent = transaction.amount;
+          const actionCell = document.createElement("td");
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.classList.add("delete-button");
+          deleteButton.dataset.id = transaction._id;
+          actionCell.appendChild(deleteButton);
+          row.appendChild(descriptionCell);
+          row.appendChild(amountCell);
+          row.appendChild(actionCell);
+          if (prepend) {
+            transactionList.prepend(row);
+          } else {
+            transactionList.appendChild(row);
+          }
+        });
+      }
+
+      function updateTotalAmount(totalAmount) {
+        document.getElementById("totalAmount").textContent = totalAmount;
+      }
+
+      // Add event listener to delete buttons
+      document.addEventListener("click", async (event) => {
+        if (event.target.classList.contains("delete-button")) {
+          const transactionId = event.target.dataset.id;
+          try {
+            const response = await fetch(`/transactions/${transactionId}`, {
+              method: "DELETE",
+            });
+            if (response.ok) {
+              event.target.closest("tr").remove();
+              const totalAmount = parseInt(
+                document.getElementById("totalAmount").textContent
+              );
+              const amount = parseInt(
+                event.target.closest("tr").querySelector("td:nth-child(2)")
+                  .textContent
+              );
+              updateTotalAmount(totalAmount - amount);
+            } else {
+              console.error("Failed to delete transaction");
+            }
+          } catch (error) {
+            console.error("Error deleting transaction:", error);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
